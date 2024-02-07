@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 
 // PROPS A DEFINIR:
 const props = defineProps({
@@ -49,17 +49,15 @@ const props = defineProps({
   },
   data: {
     type: Array,
-    default: () => [
-      { name: 'Luke', Homeworld: 'Tatooine', age: 19 },
-      { name: 'Leia', Homeworld: 'Alderaan', age: 19 }
-    ]
+    default: () => null
   },
   columns: {
     type: Array,
-    default: () => [
-      { label: 'Name', field: 'name' },
-      { label: 'Age', field: 'age' }
-    ]
+    default: null
+  },
+  fullWidth: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -109,6 +107,19 @@ const expansiblePaddingYComputed = computed(() => {
   return numberPortion + stringPortion
 })
 
+watch(
+  () => props.data,
+  (newValue, oldValue) => {
+    updateRows()
+  }
+)
+watch(
+  () => props.columns,
+  (newValue, oldValue) => {
+    updateRows()
+  }
+)
+
 onMounted(() => {
   updateRows()
 })
@@ -117,7 +128,7 @@ const baseHeight = 24
 </script>
 
 <template>
-  <table>
+  <table v-if="data !== null && columns !== null" :class="fullWidth ? 'w-full' : ''">
     <thead>
       <th
         v-for="{ label, field } in columns"
@@ -134,12 +145,12 @@ const baseHeight = 24
         </td>
       </tr>
       <tr
-        class="transition-all duration-500 overflow-hidden custom-border-x"
+        class="custom-transition-tr overflow-hidden custom-border-x"
         :class="row.isExpanded ? 'h-auto custom-border-bottom' : 'h-0'"
       >
         <td colspan="3" class="expansible-td">
           <div
-            class="transition-all duration-500 overflow-hidden flex flex-col justify-center expansible-child"
+            class="overflow-hidden flex flex-col justify-center expansible-child"
             :style="{
               height: row.isExpanded
                 ? `calc(${baseHeight * row.expandableDataCount}px + ${expansiblePaddingYComputed})`
@@ -156,6 +167,11 @@ const baseHeight = 24
 </template>
 
 <style scoped>
+.custom-transition-tr{
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.6s;
+
+}
 .expansible-td {
   border: none;
   vertical-align: center;
@@ -163,6 +179,8 @@ const baseHeight = 24
 }
 .expansible-child {
   background-color: v-bind(expandableBackgroundColor);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s;
 }
 td {
   padding: v-bind(tdPaddingY) v-bind(tdPaddingX);
