@@ -158,7 +158,7 @@ const baseHeight = 24
               padding: `0px ${expansiblePaddingX}`
             }"
           >
-            <div v-for="(value, key) in row.expandableData" :key="key">{{ key }}: {{ value }}</div>
+            <div v-for="(value, key) in row.expandableData" :key="key"><span class="font-semibold">{{ key }}</span>: {{ value }}</div>
           </div>
         </td>
       </tr>

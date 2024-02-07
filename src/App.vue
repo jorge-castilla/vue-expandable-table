@@ -1,5 +1,6 @@
 <template>
-  <main class="w-screen h-screen flex justify-center items-center">
+  <main class="w-screen h-screen flex flex-col justify-center items-center">
+    <div class="text-start text-lg mb-2">Example Expandable Table</div>
     <expandable-table :data="data" :columns="columns"></expandable-table>
   </main>
 </template>
